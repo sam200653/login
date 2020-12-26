@@ -8,10 +8,15 @@
         "cookie-session": "*",
         "ejs": "*",
         "express": "*",
+        "express-formidable": "^1.2.0",
         "mongodb": "^3.6.3"
     },
     "engine": "node >= 12.0.0",
     "scripts": {
-        "start": "node server"
+        "start": "node server",
+        "test": "nodemon server"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.6"
     }
 }

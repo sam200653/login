@@ -70,8 +70,12 @@ app.get('/', (req,res) => {
 	}
 });
 
+app.get('/home', (req,res) => {
+	res.status(200).render('home',{});
+});
 
 app.get('/login', (req,res) => {
+    console.log()
 	res.status(200).render('login',{});
 });
 
@@ -84,7 +88,7 @@ app.post('/login', (req,res) => {
 			req.session.username = req.body.name;	 // 'username': req.body.name		******************************
 		}
 	});
-	res.redirect('/home');
+	res.redirect('http://google.com');
 });
 
 
