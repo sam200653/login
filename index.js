@@ -3,6 +3,7 @@ const session = require("cookie-session");
 const bodyParser = require("body-parser");
 const app = express();
 
+const mongo = require('mongodb');
 const MongoClient = require("mongodb").MongoClient;
 const mongourl =
   "mongodb+srv://sam200653:sam200653@cluster0.qpvzu.mongodb.net/test2?retryWrites=true&w=majority";
@@ -77,7 +78,7 @@ app.get("/list", (req, res) => {
 /////////////////////////////////////////////////////////
 app.get('/:id', (req, res) => {
   (async function () {
-    var temp = req.param.id;
+    var temp = req.params.id;
     const client = new MongoClient(mongourl);
 
     try {
@@ -86,8 +87,8 @@ app.get('/:id', (req, res) => {
 
       const db = client.db(dbName);
       const col = db.collection('restaurant');
-    
-      const restaurants = await col.find({_id:ObjectId("5fe8c4e3732e2c032b96da40")}).limit(1).toArray();
+      
+      const restaurants = await col.find({"name": temp}).limit(1).toArray();
       console.log(restaurants);
       res.status(200).render("display", {restaurants: restaurants});
     } catch (err) {
