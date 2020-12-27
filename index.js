@@ -3,10 +3,9 @@ const session = require("cookie-session");
 const bodyParser = require("body-parser");
 const app = express();
 
-const mongo = require('mongodb');
 const MongoClient = require("mongodb").MongoClient;
 const mongourl =
-  "mongodb+srv://sam200653:sam200653@cluster0.qpvzu.mongodb.net/test2?retryWrites=true&w=majority";
+  "mongodb+srv://sam200653:sam200653@cluster0.qpvzu.mongodb.net/test?retryWrites=true&w=majority";
 const dbName = "test2";
 
 const users = new Array(
@@ -41,7 +40,7 @@ app.post("/login", (req, res) => {
   users.forEach((user) => {
     if (user.name == req.body.username && user.password == req.body.password) {
       req.session.authenticated = true;
-      req.session.username = req.body.name;
+      req.session.username = req.body.username;
       res.redirect("/home");
     }
   });
@@ -75,6 +74,10 @@ app.get("/list", (req, res) => {
   })();
   
 });
+//////////////////////////////////////////////////////////////
+app.get("/inserts", (req, res) => {
+  res.status(200).render("inserts", {});
+});
 
 app.post("/inserts", (req, res) => {
   (async function () {
@@ -84,22 +87,27 @@ app.post("/inserts", (req, res) => {
       await client.connect();
       console.log("Connected correctly to server");
   
-      const db = client.db(dbName);
+      const db = client.db("test2");
       const col = db.collection('restaurant');
-      var restaurants = "inserts";
+      
       
       // Insert single documents
-    r = await db.collection('restaurant').insertOne(req.body,{
-      inserts_name:req.body.restaurants_name,
-      inserts_cusisine: req.body.restaurants_cusisne,
-      inserts_street:req.body.restaurants_street,
-      inserts_building:req.body.restaurants_building,
-      inserts_zipcode:req.body.restaurants_zipcode,
-      inserts_GPS_Coordinates_lon:req.body.restaurants_coordLON,
-      inserts_GPS_Coordinates_lat:req.body.restaurants_coordLAT,
-      inserts_photo:req.body.restaurants_photo,
-      owner: req.body.name
+      await col.insertOne({
+      "restaurarantID": req.body.id,
+      "name":req.body.name,
+      "borough":req.body.borough,
+      "cusisine": req.body.cusisne,
+      "street":req.body.street,
+      "building":req.body.building,
+      "zipcode":req.body.zipcode,
+      "coord(LON)":req.body.coordLON,
+      "coord(LAT)":req.body.coordLAT,
+      //"photo":req.body.photo,
+      "owner": req.session.username
     });
+    console.log("inserted");
+
+    
 
     //assert.equal(1, r.insertedCount);//
     //[{name:1}, {cusisine:1},{street:1},{building:1},{zipcode:1},{coordLON:1},{coordLAT:1},{photo:1}]//
@@ -119,7 +127,7 @@ app.post("/inserts", (req, res) => {
         const col = db.collection('updates');
         let r;
 
-        // Update a single document
+        Update a single document
         r = await col.updateOne(req.body,{
       inserts_name:req.body.restaurants_name,
       inserts_cusisine: req.body.restaurants_cusisne,
