@@ -5,7 +5,7 @@ const app = express();
 
 const MongoClient = require("mongodb").MongoClient;
 const mongourl =
-  "mongodb+srv://sam200653:sam200653@cluster0.qpvzu.mongodb.net/test2?retryWrites=true&w=majority";
+  "";
 const dbName = "test2";
 
 const users = new Array(
