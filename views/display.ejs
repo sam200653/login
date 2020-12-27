@@ -1,0 +1,14 @@
+<html>
+    <body>
+        <H2>Restaurants Display</H2>
+        <ul>
+            <% for (var r of restaurants) { %>
+                    <h4><%= r.restaurantID %><h4></h4>
+                    <h4><%= r.name %><h4></h4>
+                    <h4><%= r.borough %><h4></h4>
+                    <h4><%= r.cusisine %><h4></h4>
+            <% } %>
+            
+        </ul>
+    </body>
+</html>
