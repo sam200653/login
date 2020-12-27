@@ -1,14 +1,20 @@
 <html>
     <body>
         <H2>Restaurants Display</H2>
-        <ul>
-            <% for (var r of restaurants) { %>
-                    <h4><%= r.restaurantID %><h4></h4>
-                    <h4><%= r.name %><h4></h4>
-                    <h4><%= r.borough %><h4></h4>
-                    <h4><%= r.cusisine %><h4></h4>
-            <% } %>
+        <% for (var r of restaurants) { %>
+                <h4>Restaurant ID: <%= r.restaurantID %><h4>
+                <h4>Restaurant Name: <%= r.name %><h4>
+                <h4>Borough: <%= r.borough %><h4>
+                <h4>Cusisine: <%= r.cusisine %><h4>
+                <dt><h4>Location:<h4></dt>
+                <dd><h4><%= r.street %> <h4></dd>
+                <dd><h4><%= r.building %><h4></dd>
+                <h4>Zipcode: <%= r.zipcode %><h4>
+                <h4>Coordinate: (<%= r.coordLAT %>, <%= r.coordLON %>)<h4>
+                <h4>Owner: <%= r.owner %><h4>
+                <h4>Rate: <h4>
+                <h4><%= r.gradesUser %>: <%= r.gradesScore %><h4>
+        <% } %>
             
-        </ul>
     </body>
 </html>
