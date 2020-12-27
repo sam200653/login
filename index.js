@@ -40,7 +40,7 @@ app.post("/login", (req, res) => {
   users.forEach((user) => {
     if (user.name == req.body.username && user.password == req.body.password) {
       req.session.authenticated = true;
-      req.session.username = req.body.username;
+      req.session.username = req.body.name;
       res.redirect("/home");
     }
   });
@@ -52,9 +52,8 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 //////////////////////////////////////////////////////////////
-app.get('/:id', (req, res) => {
+app.get("/list", (req, res) => {
   (async function () {
-    var temp = req.param.id;
     const client = new MongoClient(mongourl);
 
     try {
@@ -63,10 +62,10 @@ app.get('/:id', (req, res) => {
 
       const db = client.db(dbName);
       const col = db.collection('restaurant');
-    
-      const restaurants = await col.find({_id:ObjectId("5fe8c4e3732e2c032b96da40")}).limit(1).toArray();
-      console.log(restaurants);
-      res.status(200).render("display", {restaurants: restaurants});
+
+      const restaurants = await col.find({}).toArray();
+     
+      res.status(200).render("list", {restaurants: restaurants});
     } catch (err) {
       console.log(err.stack);
     }
@@ -75,40 +74,46 @@ app.get('/:id', (req, res) => {
   })();
   
 });
-//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+
+
 app.get("/inserts", (req, res) => {
   res.status(200).render("inserts", {});
 });
 
 app.post("/inserts", (req, res) => {
-  (async function () {
-    const client = new MongoClient(mongourl);
+  (async function() {
+    const client = new MongoClient(url);
 
     try {
       await client.connect();
       console.log("Connected correctly to server");
-  
-      const db = client.db("test2");
-      const col = db.collection('restaurant');
-      
-      
-      // Insert single documents
-      await col.insertOne({
-      "restaurarantID": req.body.id,
+
+      const db = client.db(dbName);
+
+      // Insert a single document
+      await col.insertOne({      "restaurarantID": req.body.id,
       "name":req.body.name,
       "borough":req.body.borough,
       "cusisine": req.body.cusisne,
       "street":req.body.street,
       "building":req.body.building,
       "zipcode":req.body.zipcode,
-      "coord(LON)":req.body.coordLON,
-      "coord(LAT)":req.body.coordLAT,
+      "coordLON":req.body.coordLON,
+      "coordLAT":req.body.coordLAT,
       //"photo":req.body.photo,
       "owner": req.session.username
     });
-    console.log("inserted");
+    } catch (err) {
+      console.log(err.stack);
+    }
 
-    
+    // Close connection
+    client.close();
+  })();
+
+});
 
     //assert.equal(1, r.insertedCount);//
     //[{name:1}, {cusisine:1},{street:1},{building:1},{zipcode:1},{coordLON:1},{coordLAT:1},{photo:1}]//
@@ -116,49 +121,76 @@ app.post("/inserts", (req, res) => {
     app.get("/update", (req, res) => {
       res.status(200).render("update", {});
     });
+    app.post("/update", (req, res) => {
+      (async function () {
+        const client = new MongoClient(mongourl);
 
-/*    app.post("/inserts", (req, res) => {(async function() {
-      const client = new MongoClient(url);
+        try {
+          await client.connect();
+          console.log("Connected correctly to server");
+
+          const db = client.db("test2");
+          const col = db.collection('restaurant');
+          if (!req.session.username == "owner") {
+            res.redirect("/home");
+          } else {
+
+          await col.findAndModify({"restaurarantID": req.body.id,
+          "name":req.body.name,
+          "borough":req.body.borough,
+          "cusisine": req.body.cusisne,
+          "street":req.body.street,
+          "building":req.body.building,
+          "zipcode":req.body.zipcode,
+          "coordLON":req.body.coordLON,
+          "coordLAT":req.body.coordLAT});};
+        } catch (err) {
+          console.log(err.stack);
+        }
+        client.close();
+      })();
     
-      try {
-        await client.connect();
-        console.log("Connected correctly to server");
-    
-        const db = client.db(dbName);
-        const col = db.collection('updates');
-        let r;
-
-        Update a single document
-        r = await col.updateOne(req.body,{
-      inserts_name:req.body.restaurants_name,
-      inserts_cusisine: req.body.restaurants_cusisne,
-      inserts_street:req.body.restaurants_street,
-      inserts_building:req.body.restaurants_building,
-      inserts_zipcode:req.body.restaurants_zipcode,
-      inserts_GPS_Coordinates_lon:req.body.restaurants_coordLON,
-      inserts_GPS_Coordinates_lat:req.body.restaurants_coordLAT,
-      inserts_photo:req.body.restaurants_photo,
-      owner: req.body.name
-      });
-
-
-      } catch (err) {
-        console.log(err.stack);
-      }
-    
-      // Close connection
-      client.close();
-    })(); */
+    });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     app.get("/rate", (req, res) => {
       res.status(200).render("update", {});
     });
-    
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     app.get("/delete", (req, res) => {
       res.status(200).render("delete", {});
+    });
+    app.post("/delete", (req, res) => {
+      (async function () {
+        const client = new MongoClient(mongourl);
+
+        try {
+          await client.connect();
+          console.log("Connected correctly to server");
+
+          const db = client.db("test2");
+          const col = db.collection('restaurant');
+          if (!req.session.username == "owner") {
+            res.redirect("/home");
+          } else {
+
+          await col.drop({"restaurarantID": req.body.id,
+          "name":req.body.name,
+          "borough":req.body.borough,
+          "cusisine": req.body.cusisne,
+          "street":req.body.street,
+          "building":req.body.building,
+          "zipcode":req.body.zipcode,
+          "coordLON":req.body.coordLON,
+          "coordLAT":req.body.coordLAT});};
+        }catch (err) {
+          console.log(err.stack);
+        }
+        client.close();
+      })();
+    
     });
 
 
@@ -166,9 +198,74 @@ app.post("/inserts", (req, res) => {
     app.get("/search", (req, res) => {
       res.status(200).render("search", {});
     });
+    app.post("/search", (req, res) => {
+      (async function () {
+        const client = new MongoClient(mongourl);
+    
+        try {
+          await client.connect();
+          console.log("Connected correctly to server");
+    
+          const db = client.db("test2");
+          const col = db.collection('restaurant');
 
+          const restaurants = await col.find({"name": req.body.name}).limit().toArray();
+          res.status(200).render("searchresult", {restaurants: restaurants});
+    
+          
+        
+      }  catch (err) {
+          console.log(err.stack);
+      }
+    
 
+    client.close();
+  })();
+  
+});
+//////////////////////////////////////////////////////////////
 
+app.get('/seach?name=*', (req, res) => {
+  (async function () {
+    var temp = req.params.id;
+    const client = new MongoClient(mongourl);
+
+    try {
+      await client.connect();
+      console.log("Connected correctly to server");
+
+      const db = client.db(dbName);
+      const col = db.collection('restaurant');
+      
+      const restaurants = await col.find({"name": temp}).limit().toArray();
+      console.log(restaurants);
+      res.status(200).render("seachresult", {restaurants: restaurants});
+    } catch (err) {
+      console.log(err.stack);
+    }
+
+    client.close();
+  })();
+  
+});
+
+//////////////////////////////////////////////////////////////
+
+app.get('/:id', (req, res) => {
+  (async function () {
+    var temp = req.params.id;
+    const client = new MongoClient(mongourl);
+
+    try {
+      await client.connect();
+      console.log("Connected correctly to server");
+
+      const db = client.db(dbName);
+      const col = db.collection('restaurant');
+      
+      const restaurants = await col.find({"name": temp}).limit().toArray();
+      console.log(restaurants);
+      res.status(200).render("display", {restaurants: restaurants});
     } catch (err) {
       console.log(err.stack);
     }
