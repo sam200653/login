@@ -52,8 +52,9 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 //////////////////////////////////////////////////////////////
-app.get("/list", (req, res) => {
+app.get('/:id', (req, res) => {
   (async function () {
+    var temp = req.param.id;
     const client = new MongoClient(mongourl);
 
     try {
@@ -62,10 +63,10 @@ app.get("/list", (req, res) => {
 
       const db = client.db(dbName);
       const col = db.collection('restaurant');
-
-      const restaurants = await col.find({}).toArray();
-     
-      res.status(200).render("list", {restaurants: restaurants});
+    
+      const restaurants = await col.find({_id:ObjectId("5fe8c4e3732e2c032b96da40")}).limit(1).toArray();
+      console.log(restaurants);
+      res.status(200).render("display", {restaurants: restaurants});
     } catch (err) {
       console.log(err.stack);
     }
