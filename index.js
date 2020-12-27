@@ -76,4 +76,97 @@ app.get("/list", (req, res) => {
   
 });
 
+app.post("/inserts", (req, res) => {
+  (async function () {
+    const client = new MongoClient(mongourl);
+
+    try {
+      await client.connect();
+      console.log("Connected correctly to server");
+  
+      const db = client.db(dbName);
+      const col = db.collection('restaurant');
+      var restaurants = "inserts";
+      
+      // Insert single documents
+    r = await db.collection('restaurant').insertOne(req.body,{
+      inserts_name:req.body.restaurants_name,
+      inserts_cusisine: req.body.restaurants_cusisne,
+      inserts_street:req.body.restaurants_street,
+      inserts_building:req.body.restaurants_building,
+      inserts_zipcode:req.body.restaurants_zipcode,
+      inserts_GPS_Coordinates_lon:req.body.restaurants_coordLON,
+      inserts_GPS_Coordinates_lat:req.body.restaurants_coordLAT,
+      inserts_photo:req.body.restaurants_photo,
+      owner: req.body.name
+    });
+
+    //assert.equal(1, r.insertedCount);//
+    //[{name:1}, {cusisine:1},{street:1},{building:1},{zipcode:1},{coordLON:1},{coordLAT:1},{photo:1}]//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    app.get("/update", (req, res) => {
+      res.status(200).render("update", {});
+    });
+
+/*    app.post("/inserts", (req, res) => {(async function() {
+      const client = new MongoClient(url);
+    
+      try {
+        await client.connect();
+        console.log("Connected correctly to server");
+    
+        const db = client.db(dbName);
+        const col = db.collection('updates');
+        let r;
+
+        // Update a single document
+        r = await col.updateOne(req.body,{
+      inserts_name:req.body.restaurants_name,
+      inserts_cusisine: req.body.restaurants_cusisne,
+      inserts_street:req.body.restaurants_street,
+      inserts_building:req.body.restaurants_building,
+      inserts_zipcode:req.body.restaurants_zipcode,
+      inserts_GPS_Coordinates_lon:req.body.restaurants_coordLON,
+      inserts_GPS_Coordinates_lat:req.body.restaurants_coordLAT,
+      inserts_photo:req.body.restaurants_photo,
+      owner: req.body.name
+      });
+
+
+      } catch (err) {
+        console.log(err.stack);
+      }
+    
+      // Close connection
+      client.close();
+    })(); */
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    app.get("/rate", (req, res) => {
+      res.status(200).render("update", {});
+    });
+    
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    app.get("/delete", (req, res) => {
+      res.status(200).render("delete", {});
+    });
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    app.get("/search", (req, res) => {
+      res.status(200).render("search", {});
+    });
+
+
+
+    } catch (err) {
+      console.log(err.stack);
+    }
+
+    client.close();
+  })();
+  
+});
+
 app.listen(8099);
