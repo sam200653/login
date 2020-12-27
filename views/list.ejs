@@ -1,10 +1,10 @@
 <html>
     <body>
-        <H2>Restaurants</H2>
+        <H2>Restaurants List</H2>
         <ul>
             <% for (var r of restaurants) { %>
-            <li><%= r.name %></li>
-            <% } %>
+                <li><a href='/display?_id=<%=r._id%>'><%= r.name %></a></li>
+                <% } %>
         </ul>
     </body>
 </html>
