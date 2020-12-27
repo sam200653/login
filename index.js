@@ -5,8 +5,8 @@ const app = express();
 
 const MongoClient = require("mongodb").MongoClient;
 const mongourl =
-  "mongodb+srv://sam200653:sam200653@cluster0.qpvzu.mongodb.net/test?retryWrites=true&w=majority";
-const dbName = "test";
+  "mongodb+srv://sam200653:sam200653@cluster0.qpvzu.mongodb.net/test2?retryWrites=true&w=majority";
+const dbName = "test2";
 
 const users = new Array(
   { name: "demo", password: "" },
@@ -23,14 +23,14 @@ app.get("/", (req, res) => {
   if (!req.session.authenticated) {
     res.redirect("/login");
   } else {
-    res.status(200).render("home", { name: req.session.username });
+    res.status(200).render("home", { name: req.session.username }); //go back login unless cookies logined
   }
 });
 
 app.get("/home", (req, res) => {
   res.status(200).render("home", {});
 });
-
+//////////////////////////////////////////////////////////////
 app.get("/login", (req, res) => {
   res.status(200).render("login", {});
 });
@@ -46,12 +46,12 @@ app.post("/login", (req, res) => {
   });
   res.redirect("/login");
 });
-
+/////////////////////////////////////////////////////////////
 app.get("/logout", (req, res) => {
   req.session = null;
   res.redirect("/");
 });
-
+//////////////////////////////////////////////////////////////
 app.get("/list", (req, res) => {
   (async function () {
     const client = new MongoClient(mongourl);
@@ -66,6 +66,120 @@ app.get("/list", (req, res) => {
       const restaurants = await col.find({}).toArray();
      
       res.status(200).render("list", {restaurants: restaurants});
+    } catch (err) {
+      console.log(err.stack);
+    }
+
+    client.close();
+  })();
+  
+});
+/////////////////////////////////////////////////////////
+app.get('/:id', (req, res) => {
+  (async function () {
+    var temp = req.param.id;
+    const client = new MongoClient(mongourl);
+
+    try {
+      await client.connect();
+      console.log("Connected correctly to server");
+
+      const db = client.db(dbName);
+      const col = db.collection('restaurant');
+    
+      const restaurants = await col.find({_id:ObjectId("5fe8c4e3732e2c032b96da40")}).limit(1).toArray();
+      console.log(restaurants);
+      res.status(200).render("display", {restaurants: restaurants});
+    } catch (err) {
+      console.log(err.stack);
+    }
+
+    client.close();
+  })();
+  
+});
+
+//////////////////////////////////////////////////////////////
+app.get("/inserts", (req, res) => {
+  res.status(200).render("inserts", {});
+});
+
+app.post("/inserts", (req, res) => {
+  (async function () {
+    const client = new MongoClient(mongourl);
+
+    try {
+      await client.connect();
+      console.log("Connected correctly to server");
+  
+      const db = client.db(dbName);
+      const col = db.collection('restaurant');
+
+      var restaurants = "inserts";
+      
+      // Insert single documents
+    r = await db.collection('restaurants').insertOne(req.body,{
+      inserts_name:req.body.restaurants_name,
+      inserts_cusisine: req.body.restaurants_cusisne,
+      inserts_street:req.body.restaurants_street,
+      inserts_building:req.body.restaurants_building,
+      inserts_zipcode:req.body.restaurants_zipcode,
+      inserts_GPS_Coordinates_lon:req.body.restaurants_coordLON,
+      inserts_GPS_Coordinates_lat:req.body.restaurants_coordLAT,
+      inserts_photo:req.body.restaurants_photo,
+      owner: req.body.name
+    });
+
+    //assert.equal(1, r.insertedCount);//
+    //[{name:1}, {cusisine:1},{street:1},{building:1},{zipcode:1},{coordLON:1},{coordLAT:1},{photo:1}]//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+    app.get("/update", (req, res) => {
+      res.status(200).render("update", {});
+    });
+
+/*    app.post("/inserts", (req, res) => {(async function() {
+      const client = new MongoClient(url);
+    
+      try {
+        await client.connect();
+        console.log("Connected correctly to server");
+    
+        const db = client.db(dbName);
+        const col = db.collection('updates');
+        let r;
+
+        // Update a single document
+        r = await col.updateOne({a:1}, {$set: {b: 1}});
+        assert.equal(1, r.matchedCount);
+        assert.equal(1, r.modifiedCount);
+
+      } catch (err) {
+        console.log(err.stack);
+      }
+    
+      // Close connection
+      client.close();
+    })(); */
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    app.get("/rate", (req, res) => {
+      res.status(200).render("update", {});
+    });
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    app.get("/delete", (req, res) => {
+      res.status(200).render("delete", {});
+    });
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+    app.get("/search", (req, res) => {
+      res.status(200).render("search", {});
+    });
+
+
+
     } catch (err) {
       console.log(err.stack);
     }
