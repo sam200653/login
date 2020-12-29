@@ -1,0 +1,16 @@
+{
+    "name": "server",
+    "description": "Node.js Session",
+    "version": "0.0.1",
+    "dependencies": {
+        "node": "12.19.0",
+        "body-parser": "1.19.0",
+        "cookie-session": "1.4.0",
+        "ejs": "3.1.5",
+        "express": "4.17.1",
+        "mongodb": "^3.6.3"
+    },
+    "scripts": {
+        "start": "node server.js"
+    }
+}
